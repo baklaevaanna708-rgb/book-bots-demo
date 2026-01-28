@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Бот-Дизайнер обложек</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 15px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .back-btn { background: #f5576c; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold; }
+        h1 { color: #333; }
+        .cover-preview { width: 300px; height: 450px; margin: 0 auto 30px; border: 2px dashed #ddd; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #666; background: #f9f9f9; }
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .control-group { background: #f8f9fa; padding: 20px; border-radius: 10px; }
+        label { display: block; margin-bottom: 10px; font-weight: bold; color: #555; }
+        select, input { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .generate-btn { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; border: none; padding: 15px; border-radius: 10px; font-size: 1.2rem; cursor: pointer; grid-column: span 2; }
+        .cover-result { text-align: center; margin-top: 30px; padding: 20px; background: #e8f4fd; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Назад</a>
+            <h1>🎨 Бот-Дизайнер обложек</h1>
+        </div>
+        
+        <div id="coverPreview" class="cover-preview">
+            Ваша обложка появится здесь
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label>Жанр книги:</label>
+                <select id="genre">
+                    <option>Детектив</option>
+                    <option>Фэнтези</option>
+                    <option>Роман</option>
+                    <option>Фантастика</option>
+                    <option>Поэзия</option>
+                </select>
+                
+                <label>Стиль обложки:</label>
+                <select id="style">
+                    <option>Минимализм</option>
+                    <option>Винтаж</option>
+                    <option>Модерн</option>
+                    <option>Гранж</option>
+                    <option>Элегантный</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <label>Название книги:</label>
+                <input type="text" id="title" placeholder="Введите название" value="Тени прошлого">
+                
+                <label>Имя автора:</label>
+                <input type="text" id="author" placeholder="Имя автора" value="Алексей Петров">
+                
+                <label>Цветовая гамма:</label>
+                <input type="color" id="color" value="#4A90E2">
+            </div>
+            
+            <button class="generate-btn" onclick="generateCover()">
+                🎨 Сгенерировать обложку
+            </button>
+        </div>
+        
+        <div id="result" class="cover-result" style="display: none;">
+            <h3>✅ Обложка готова!</h3>
+            <p>Вы можете скачать её в формате PNG или поделиться ссылкой.</p>
+            <button onclick="downloadCover()" style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 10px; cursor: pointer;">📥 Скачать PNG</button>
+            <button onclick="shareCover()" style="background: #2196F3; color: white; border: none; padding: 10px 20px; border-radius: 5px; margin: 10px; cursor: pointer;">🔗 Поделиться</button>
+        </div>
+    </div>
+
+    <script>
+        function generateCover() {
+            const genre = document.getElementById('genre').value;
+            const style = document.getElementById('style').value;
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const color = document.getElementById('color').value;
+            
+            // Обновляем превью
+            const preview = document.getElementById('coverPreview');
+            preview.innerHTML = `
+                <div style="width: 100%; height: 100%; background: ${color}; border-radius: 8px; padding: 30px; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+                    <div style="font-size: 2.5rem; font-weight: bold; margin-bottom: 20px;">${title}</div>
+                    <div style="font-size: 1.5rem; margin-bottom: 10px;">${author}</div>
+                    <div style="font-size: 1rem; opacity: 0.9;">${genre} • ${style}</div>
+                    <div style="margin-top: 30px; font-size: 0.8rem;">Сгенерировано Book Cover Bot</div>
+                </div>
+            `;
+            
+            // Показываем результат
+            document.getElementById('result').style.display = 'block';
+            
+            // Прокручиваем к результату
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function downloadCover() {
+            alert('В реальном боте здесь было бы скачивание PNG файла обложки. Это демо-версия.');
+        }
+        
+        function shareCover() {
+            alert('Ссылка на обложку скопирована в буфер обмена!');
+        }
+        
+        // Генерируем первую обложку при загрузке
+        window.onload = generateCover;
+    </script>
+</body>
+</html>

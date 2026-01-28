@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бот-Генератор сценариев</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .back-btn {
+            background: #4facfe;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #3a9bf7;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 2.2rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .input-section {
+            margin-bottom: 30px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 15px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 150px;
+            margin-bottom: 20px;
+            transition: border 0.3s;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
+        }
+        
+        .examples {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .examples h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .example-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .example-btn {
+            background: white;
+            border: 2px solid #e3f2fd;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .example-btn:hover {
+            background: #e3f2fd;
+            border-color: #4facfe;
+            transform: translateY(-2px);
+        }
+        
+        .result {
+            background: #f0f9ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border-left: 5px solid #4facfe;
+            display: none;
+        }
+        
+        .result h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scenario-option {
+            background: white;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 12px;
+            border: 2px solid #e3f2fd;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .scenario-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .scenario-title {
+            color: #4facfe;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .scenario-desc {
+            color: #555;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .scenario-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            color: #666;
+            margin-bottom: 15px;
+            border-left: 3px solid #4facfe;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        .save-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: #45a049;
+        }
+        
+        .copy-btn {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .copy-btn:hover {
+            background: #0b7dda;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .loading:after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: ''; }
+            40% { content: '.'; }
+            60% { content: '..'; }
+            80%, 100% { content: '...'; }
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Назад к ботам</a>
+            <h1>🎭 Генератор альтернативных сценариев</h1>
+        </div>
+        
+        <p class="subtitle">
+            Опишите ваш сюжет или идею книги, и я создам несколько альтернативных вариантов развития.
+            Идеально для преодоления творческого блока или поиска неожиданных поворотов.
+        </p>
+        
+        <div class="input-section">
+            <textarea id="scenarioInput" placeholder="Опишите ваш сюжет здесь... Например: 'Детективная история об убийстве в загородном поместье, где каждый гость что-то скрывает...'">Детектив об убийстве в загородном доме, где все гости под подозрением</textarea>
+            
+            <button class="generate-btn" onclick="generateAlternatives()">
+                🌀 Сгенерировать альтернативные сценарии
+            </button>
+        </div>
+        
+        <div class="examples">
+            <h3>📋 Быстрые примеры для теста:</h3>
+            <div class="example-buttons">
+                <button class="example-btn" onclick="useExample(1)">Любовный треугольник в Париже 1920-х</button>
+                <button class="example-btn" onclick="useExample(2)">Фэнтези с драконом и мятежной принцессой</button>
+                <button class="example-btn" onclick="useExample(3)">Научная фантастика о первой колонии на Марсе</button>
+                <button class="example-btn" onclick="useExample(4)">Исторический роман о художнике эпохи Возрождения</button>
+                <button class="example-btn" onclick="useExample(5)">Психологический триллер с ненадежным рассказчиком</button>
+            </div>
+        </div>
+        
+        <div id="result" class="result">
+            <h2>🌀 Альтернативные сценарии:</h2>
+            <div id="originalPlot"></div>
+            <div id="alternatives"></div>
+        </div>
+        
+        <footer>
+            <p>🤖 Бот-генератор сценариев | Часть проекта "Три бота для книг" | 2024</p>
+            <p>Используйте стрелку вверху слева, чтобы вернуться к выбору ботов</p>
+        </footer>
+    </div>
+
+    <script>
+        // База данных сценариев
+        const scenarios = [
+            {
+                title: "🔀 Неожиданный поворот",
+                icon: "🔄",
+                description: "Что если убийца окажется рассказчиком, и вся история — его предсмертная исповедь?",
+                details: "Читатель узнает правду только в последней главе, что заставляет переосмыслить все предыдущие события. Каждая деталь, казавшаяся незначительной, обретает новый смысл.",
+                genre: "Психологический детектив"
+            },
+            {
+                title: "💔 Трагический выбор",
+                icon: "⚖️",
+                description: "Главный герой должен пожертвовать собой или близким человеком, чтобы спасти многих.",
+                details: "Моральная дилемма, которая раскрывает истинную сущность персонажа. Финал остается открытым — сделал ли он правильный выбор?",
+                genre: "Драма, моральная философия"
+            },
+            {
+                title: "🔄 Роли наоборот",
+                icon: "🎭",
+                description: "Антагонист на самом деле пытается спасти мир, но его методы считаются неприемлемыми.",
+                details: "Серые персонажи вместо черно-белых. Кто действительно прав? Герой и злодей меняются местами по мере развития сюжета.",
+                genre: "Антиутопия, политический триллер"
+            },
+            {
+                title: "🌌 Альтернативная реальность",
+                icon: "🌍",
+                description: "Все события происходят в параллельной вселенной, где магия заменяет технологии.",
+                details: "Как меняются характеры и конфликты в мире с другими законами физики? Социальные структуры, экономика, религия — всё иначе.",
+                genre: "Фэнтези, альтернативная история"
+            },
+            {
+                title: "⏳ Временной парадокс",
+                icon: "⌛",
+                description: "Герой путешествует во времени, чтобы предотвратить трагедию, но в результате становится её причиной.",
+                details: "Парадокс предопределения — можно ли изменить судьбу? Каждое исправление прошлого создает новые проблемы в будущем.",
+                genre: "Научная фантастика"
+            },
+            {
+                title: "👥 Двойник среди нас",
+                icon: "🎪",
+                description: "У каждого персонажа есть двойник-антипод, живущий параллельной жизнью.",
+                details: "Что если встретиться со своим альтер эго? Слияние или конфликт? Кто из них настоящий?",
+                genre: "Философская фантастика"
+            },
+            {
+                title: "💭 Все это сон",
+                icon: "😴",
+                description: "Вся история оказывается чьим-то сном, кошмаром или галлюцинацией.",
+                details: "Граница между реальностью и фантазией стирается. Что было на самом деле? Проснется ли персонаж?",
+                genre: "Психологический хоррор"
+            },
+            {
+                title: "📖 Книга в книге",
+                icon: "📚",
+                description: "Герои обнаруживают, что они персонажи в книге, которую читает кто-то в реальном мире.",
+                details: "Метапроза. Персонажи пытаются выйти за пределы своего повествования, общаться с читателем или автором.",
+                genre: "Метафикция"
+            }
+        ];
+
+        // Примеры для быстрого теста
+        const examples = [
+            "Любовный треугольник в Париже 1920-х годов между русской эмигранткой, французским художником-авангардистом и американским писателем, потерявшим вдохновение.",
+            "Молодая принцесса, обязанная выйти замуж за принца соседнего королевства, обнаруживает, что её домашний дракон — последний из древней королевской династии магических существ, и он предлагает ей иной путь.",
+            "Первая колония на Марсе сталкивается с необъяснимой аномалией: время течет с разной скоростью в разных модулях базы. Команда распадается на группы, живущие в разных временных потоках.",
+            "Талантливый, но непризнанный художник эпохи Возрождения продает душу демону в обмен на славу и мастерство, но демон требует неожиданную плату — память о его единственной любви.",
+            "Психолог начинает вести дневник пациента с раздвоением личности, но постепенно понимает, что записи в дневнике меняются, и теперь он не уверен, кто из них пациент, а кто — психолог."
+        ];
+
+        function useExample(number) {
+            document.getElementById('scenarioInput').value = examples[number - 1];
+        }
+
+        function generateAlternatives() {
+            const input = document.getElementById('scenarioInput').value.trim();
+            
+            if (!input) {
+                alert('📝 Пожалуйста, введите описание сюжета!');
+                return;
+            }
+            
+            // Показываем результат
+            const resultDiv = document.getElementById('result');
+            const originalDiv = document.getElementById('originalPlot');
+            const alternativesDiv = document.getElementById('alternatives');
+            
+            // Очищаем предыдущие результаты
+            alternativesDiv.innerHTML = '';
+            
+            // Показываем оригинальный сюжет
+            originalDiv.innerHTML = `
+                <div class="scenario-option" style="background: #fff8e1; border-color: #ffd54f;">
+                    <div class="scenario-title">📖 Исходный сюжет</div>
+                    <div class="scenario-desc">"${input}"</div>
+                    <div class="scenario-details">
+                        <strong>Длина:</strong> ${input.length} символов<br>
+                        <strong>Примерный объем:</strong> ${Math.ceil(input.length / 1500)} страниц текста
+                    </div>
+                </div>
+                <hr style="margin: 30px 0; border: none; border-top: 2px dashed #e0e0e0;">
+            `;
+            
+            // Показываем загрузку
+            alternativesDiv.innerHTML = '<div class="loading">Генерирую альтернативные сценарии</div>';
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            // Имитируем загрузку (2 секунды)
+            setTimeout(() => {
+                // Выбираем 4 случайных уникальных сценария
+                const shuffled = [...scenarios].sort(() => 0.5 - Math.random()).slice(0, 4);
+                
+                alternativesDiv.innerHTML = '';
+                
+                shuffled.forEach((scenario, index) => {
+                    // Создаем уникальные детали для этого конкретного сюжета
+                    const tailoredDetails = scenario.details.replace(/Герой/g, ['Протагонист', 'Главный персонаж', 'Центральный герой'][index % 3])
+                        .replace(/персонаж/g, ['герой', 'действующее лицо', 'характер'][index % 3]);
+                    
+                    alternativesDiv.innerHTML += `
+                        <div class="scenario-option">
+                            <div class="scenario-title">${scenario.icon} ${scenario.title}</div>
+                            <div class="scenario-desc">${scenario.description}</div>
+                            <div class="scenario-details">
+                                <strong>Развитие идеи:</strong> ${tailoredDetails}<br><br>
+                                <strong>Подходящие жанры:</strong> ${scenario.genre}<br>
+                                <strong>Лучшее место в сюжете:</strong> ${['Первый акт', 'Поворотный момент', 'Кульминация', 'Финал'][index]}
+                            </div>
+                            <div class="action-buttons">
+                                <button class="action-btn save-btn" onclick="saveScenario('${scenario.title}')">
+                                    💾 Сохранить идею
+                                </button>
+                                <button class="action-btn copy-btn" onclick="copyToClipboard('${scenario.title}: ${scenario.description}')">
+                                    📋 Копировать
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Добавляем кнопку для генерации еще вариантов
+                alternativesDiv.innerHTML += `
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button onclick="generateAlternatives()" style="
+                            background: white;
+                            border: 2px solid #4facfe;
+                            color: #4facfe;
+                            padding: 15px 30px;
+                            border-radius: 10px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                        " onmouseover="this.style.background='#4facfe'; this.style.color='white'" 
+                        onmouseout="this.style.background='white'; this.style.color='#4facfe'">
+                            🔄 Сгенерировать другие варианты
+                        </button>
+                    </div>
+                `;
+                
+            }, 2000);
+        }
+
+        function saveScenario(title) {
+            alert(`💡 Идея "${title}" сохранена в вашу библиотеку сценариев!\n\nВы можете найти её в разделе "Сохраненные идеи" (в реальном боте эта функция была бы реализована).`);
+            
+            // В реальном приложении здесь был бы код для сохранения в localStorage или базе данных
+            try {
+                let savedScenarios = JSON.parse(localStorage.getItem('savedScenarios') || '[]');
+                savedScenarios.push({
+                    title: title,
+                    timestamp: new Date().toLocaleString(),
+                    plot: document.getElementById('scenarioInput').value
+                });
+                localStorage.setItem('savedScenarios', JSON.stringify(savedScenarios));
+            } catch (e) {
+                // Просто игнорируем ошибки localStorage
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ Текст скопирован в буфер обмена!');
+            }).catch(err => {
+                // Альтернативный метод для старых браузеров
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Текст скопирован!');
+            });
+        }
+
+        // При загрузке страницы вставляем пример
+        window.onload = function() {
+            // Устанавливаем фокус на текстовое поле
+            document.getElementById('scenarioInput').focus();
+            
+            // Если поле пустое, вставляем пример
+            if (!document.getElementById('scenarioInput').value.trim()) {
+                document.getElementById('scenarioInput').value = examples[0];
+            }
+        };
+
+        // Добавляем возможность отправки по Enter (с Shift - перенос строки)
+        document.getElementById('scenarioInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                generateAlternatives();
+            }
+        });
+    </script>
+</body>
+</html>
